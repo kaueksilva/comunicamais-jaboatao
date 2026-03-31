@@ -1,0 +1,42 @@
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+import { initFirebase } from './services/firebase';
+import { createOfficialChannel, listChannels } from './controllers/channels';
+import { createUser } from './controllers/users';
+import { seedDatabase, listUsers, syncUserProfile } from './controllers/admin';
+
+const app = express();
+const port = process.env.PORT || 4000;
+
+// Middlewares
+app.use(cors({ origin: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Inicializa Firebase Admin SDK ANTES de qualquer rota
+initFirebase();
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'Comunica+ Backend is running' });
+});
+
+// Admin — Canais Oficiais
+app.post('/api/admin/channels', createOfficialChannel);
+app.get('/api/channels', listChannels);
+
+// Admin — Gestão de Usuários
+app.post('/api/admin/users', createUser);
+app.get('/api/admin/users', listUsers);
+app.post('/api/admin/users/:uid/sync', syncUserProfile);
+
+// Admin — Database Seed (somente primeira vez)
+app.post('/api/admin/seed', seedDatabase);
+
+app.listen(port, () => {
+  console.log(`🚀 Server running on http://localhost:${port}`);
+});

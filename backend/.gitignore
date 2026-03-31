@@ -1,0 +1,9 @@
+# Ignorar o .env e a chave privada do Firebase — NUNCA versionar essas credenciais!
+.env
+serviceAccountKey.json
+
+# Node modules
+node_modules/
+
+# Build output
+dist/

@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS SEMANTIC TOKENS ────────────────────────────────────── */
+:root {
+  --bg: #F1F5F9;
+  /* Fundo suave cinza-azulado */
+  --surface: #FFFFFF;
+  /* Superfície principal */
+  --fg: #0037C1;
+  /* Texto principal (Azul Jaboatão) */
+  --muted: #64748B;
+  /* Texto secundário */
+  --border-color: #E2E8F0;
+  /* Bordas discretas */
+
+  /* Cores base RGB para transparências */
+  --brand-blue-rgb: 0, 55, 193;
+  --brand-gold-rgb: 253, 195, 0;
+  --brand-green-rgb: 0, 168, 89;
+
+  /* Texto de Marca (Azul no claro, Branco no escuro) */
+  --brand-blue-text: #0037C1;
+}
+
+.dark {
+  --bg: #0B1120;
+  /* Azul noturno profundo */
+  --surface: #121B2E;
+  /* Azul marinho escuro */
+  --fg: #FFFFFF;
+  /* Texto puramente branco para máximo contraste */
+  --muted: #94A3B8;
+  /* Texto secundário escuro */
+  --border-color: #1E293B;
+  /* Bordas escuras */
+  --brand-blue-text: #FFFFFF;
+}
+
+/* ─── BASE GLOBAL ─────────────────────────────────────────────── */
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ─── SCROLLBAR ──────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* ─── SELEÇÃO ───────────────────────────────────────────────── */
+::selection {
+  background-color: #0037C1;
+  color: #FFFFFF;
+}
+
+/* ─── ANIMAÇÕES ──────────────────────────────────────────────── */
+@keyframes slideUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out forwards;
+}
