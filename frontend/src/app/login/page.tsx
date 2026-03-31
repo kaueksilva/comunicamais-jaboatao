@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithCustomToken } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, AlertCircle, ShieldCheck } from 'lucide-react';
@@ -23,14 +23,33 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
+      const response = await fetch(`${backendUrl}/api/auth/ad`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const payload = (await response.json()) as { error?: string; firebaseCustomToken?: string };
+
+      if (!response.ok) {
+        throw new Error(payload.error || 'Falha na autenticação via AD.');
+      }
+
+      if (!payload.firebaseCustomToken) {
+        throw new Error('O servidor de autenticação não retornou um token válido.');
+      }
+
+      await signInWithCustomToken(auth, payload.firebaseCustomToken);
       router.push('/dashboard');
     } catch (err: unknown) {
-      const code = (err as { code?: string })?.code ?? '';
-      if (['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found'].includes(code)) {
-        setError('E-mail ou senha incorretos. Verifique suas credenciais.');
-      } else if (code === 'auth/too-many-requests') {
-        setError('Muitas tentativas. Aguarde alguns minutos.');
+      const code = (err as { code?: string; message?: string })?.code ?? '';
+      const message = (err as { message?: string })?.message;
+
+      if (['auth/invalid-custom-token', 'auth/custom-token-mismatch'].includes(code)) {
+        setError('Token de autenticação inválido. Verifique a configuração do backend.');
+      } else if (message) {
+        setError(message);
       } else {
         setError('Erro de conexão. Tente novamente mais tarde.');
       }

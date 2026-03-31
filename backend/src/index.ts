@@ -8,6 +8,7 @@ import { initFirebase } from './services/firebase';
 import { createOfficialChannel, listChannels } from './controllers/channels';
 import { createUser } from './controllers/users';
 import { seedDatabase, listUsers, syncUserProfile } from './controllers/admin';
+import { authenticateWithAD } from './controllers/auth';
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -24,6 +25,9 @@ initFirebase();
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Comunica+ Backend is running' });
 });
+
+// Autenticação com AD
+app.post('/api/auth/ad', authenticateWithAD);
 
 // Admin — Canais Oficiais
 app.post('/api/admin/channels', createOfficialChannel);
